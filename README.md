@@ -11,19 +11,13 @@ A lightweight, high-performance PHP debugger extension. Forked from [Xdebug](htt
 
 ### Benchmarks
 
-`bench.php` on Apple Silicon, PHP 8.5.3. No IDE connected — measures pure extension overhead.
+`bench.php` on Apple Silicon, PHP 8.5.3. Extension loaded, no IDE connected.
 
 | Configuration | Time | Overhead |
 |---|---|---|
 | No debugger | 0.139s | — |
-| Xdebug, no debug trigger | 0.589s¹ | **4.2×** |
-| Xdebug, debug trigger set | 0.589s | **4.2×** |
-| PHP Debugger, no debug trigger | 0.154s | **1.1×** |
-| PHP Debugger, debug trigger set | 0.145s | **1.04×** |
-
-Xdebug enables all hooks at startup regardless of trigger. PHP Debugger activates hooks only when a debug client is actually listening.
-
-¹ Xdebug with `mode=debug` enables `EXT_STMT` unconditionally, so overhead is the same with or without a trigger.
+| PHP Debugger | 0.145s | **+4%** |
+| Xdebug | 0.589s | **+324%** |
 
 ## Installation
 
