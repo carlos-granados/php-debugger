@@ -17,27 +17,13 @@ A lightweight, high-performance PHP debugger extension. Forked from [Xdebug](htt
 
 `bench.php` on Apple Silicon, PHP 8.5.3. Extension loaded, no IDE connected.
 
-| Configuration | Time | Overhead |
-|---|---|---|
-| No debugger | 0.139s | — |
-| PHP Debugger | 0.145s | **+4%** |
-| Xdebug | 0.589s | **+324%** |
+| Configuration | Time   | Overhead  |
+|---------------|--------|-----------|
+| No debugger   | 0.139s | —         |
+| PHP Debugger  | 0.145s | **+4%**   |
+| Xdebug        | 0.589s | **+324%** |
 
 ## Installation
-
-### Quick install
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/pronskiy/php-debugger/main/install.php | php
-```
-
-Installs the extension for the PHP it's run with — detects version and platform automatically.
-
-### PIE (PHP Installer for Extensions)
-
-```bash
-pie install pronskiy/php-debugger
-```
 
 ### Manual download
 
@@ -45,6 +31,20 @@ Grab the right binary from [Releases](https://github.com/pronskiy/php-debugger/r
 
 ```ini
 zend_extension=php_debugger.so
+```
+
+### 🚧 Coming soon 
+
+**Quick install script:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pronskiy/php-debugger/main/install.php | php
+```
+
+**PIE (PHP Installer for Extensions):**
+
+```bash
+pie install pronskiy/php-debugger
 ```
 
 ## Configuration
@@ -81,17 +81,17 @@ Works as-is. No changes needed.
 
 PHP Debugger is a drop-in replacement for Xdebug\'s debug mode:
 
-| Feature | PHP Debugger | Xdebug |
-|---|---|---|
-| `extension_loaded("xdebug")` | ✅ true | ✅ true |
-| `extension_loaded("php_debugger")` | ✅ true | ❌ false |
-| `xdebug.*` INI settings | ✅ works | ✅ works |
-| `xdebug_break()` | ✅ works | ✅ works |
-| `XDEBUG_SESSION` trigger | ✅ works | ✅ works |
-| Step debugging (DBGp) | ✅ | ✅ |
-| Code coverage | ❌ use pcov | ✅ |
-| Profiling | ❌ removed | ✅ |
-| Tracing | ❌ removed | ✅ |
+| Feature                            | PHP Debugger | Xdebug  |
+|------------------------------------|--------------|---------|
+| `extension_loaded("xdebug")`       | ✅ true       | ✅ true  |
+| `extension_loaded("php_debugger")` | ✅ true       | ❌ false |
+| `xdebug.*` INI settings            | ✅ works      | ✅ works |
+| `xdebug_break()`                   | ✅ works      | ✅ works |
+| `XDEBUG_SESSION` trigger           | ✅ works      | ✅ works |
+| Step debugging (DBGp)              | ✅            | ✅       |
+| Code coverage                      | ❌ use pcov   | ✅       |
+| Profiling                          | ❌ removed    | ✅       |
+| Tracing                            | ❌ removed    | ✅       |
 
 ### New names (optional)
 
