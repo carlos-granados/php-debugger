@@ -77,52 +77,33 @@ jobs:
     build-windows:
         runs-on: windows-2022
         name: "Windows (x64) — PHP ${{ inputs.php-version || '8.5' }}"
-        defaults:
-            run:
-                shell: cmd
         steps:
             -   uses: actions/checkout@v6
 
-            -   name: Setup PHP SDK
-                id: setup-php-sdk
-                uses: php/setup-php-sdk@v0.12
+            -   name: Build the extension
+                uses: php/php-windows-builder/extension@v1
                 with:
-                    version: ${{ inputs.php-version || '8.5' }}
+                    php-version: ${{ inputs.php-version || '8.5' }}
                     arch: x64
                     ts: nts
-
-            -   name: Enable Developer Command Prompt
-                uses: ilammy/msvc-dev-cmd@v1
-                with:
-                    arch: x64
-                    toolset: ${{ steps.setup-php-sdk.outputs.toolset }}
-
-            -   name: phpize
-                run: phpize
-
-            -   name: configure
-                run: configure.bat --enable-php-debugger --with-prefix=${{ steps.setup-php-sdk.outputs.prefix }}
-
-            -   name: nmake
-                run: nmake
-
-            -   name: Verify extension loads
-                run: |
-                    php -dzend_extension=php_debugger.dll -v
-                    php -dzend_extension=php_debugger.dll -r "echo 'xdebug_info() works: ' . (function_exists('xdebug_info') ? 'yes' : 'no') . PHP_EOL;"
+                    args: --enable-php-debugger
+                    run-tests: false
 
             -   name: Get build info
                 id: info
                 shell: bash
                 run: |
-                    PHP_VER=$(php -r "echo PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;")
+                    PHP_VER="${{ inputs.php-version || '8.5' }}"
                     echo "artifact_name=php-debugger-php${PHP_VER}-windows-x64" >> $GITHUB_OUTPUT
 
             -   name: Find DLL
                 id: find-dll
                 shell: pwsh
                 run: |
-                    $dll = Get-ChildItem -Recurse -Filter 'php_debugger.dll' | Select-Object -First 1
+                    $dll = Get-ChildItem -Path ${{ runner.temp }} -Recurse -Filter 'php_debugger.dll' | Select-Object -First 1
+                    if (-not $dll) {
+                        $dll = Get-ChildItem -Recurse -Filter 'php_debugger.dll' | Select-Object -First 1
+                    }
                     if (-not $dll) { Write-Error 'php_debugger.dll not found'; exit 1 }
                     Write-Host "Found DLL at: $($dll.FullName)"
                     echo "dll_path=$($dll.FullName)" >> $env:GITHUB_OUTPUT
