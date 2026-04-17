@@ -66,6 +66,7 @@ static void xdebug_error_cb(int orig_type, const char *error_filename, const uin
 
 /* execution redirection functions */
 zend_op_array* (*old_compile_file)(zend_file_handle* file_handle, int type);
+static void (*xdebug_old_execute_ex)(zend_execute_data *execute_data);
 
 /* error_cb and execption hook overrides */
 void xdebug_base_use_original_error_cb(void);
@@ -517,7 +518,31 @@ static bool should_run_user_handler(zend_execute_data *execute_data)
 	return true;
 }
 
+static bool should_run_user_handler_wrapper(zend_execute_data *execute_data)
+{
+	/* If the stack vector hasn't been initialised yet, we should abort immediately */
+	if (!XG_BASE(stack)) {
+		return false;
+	}
 
+	return !should_run_user_handler(execute_data);
+}
+
+/* We still need this to do "include", "require", and "eval" */
+static void xdebug_execute_ex(zend_execute_data *execute_data)
+{
+	bool run_user_handler = should_run_user_handler_wrapper(execute_data);
+
+	if (run_user_handler) {
+		xdebug_execute_user_code_begin(execute_data);
+	}
+
+	xdebug_old_execute_ex(execute_data);
+
+	if (run_user_handler) {
+		xdebug_execute_user_code_end(execute_data, execute_data->return_value);
+	}
+}
 
 static int check_soap_call(function_stack_entry *fse, zend_execute_data *execute_data)
 {
@@ -879,6 +904,7 @@ void xdebug_base_minit(INIT_FUNC_ARGS)
 
 	/* User Code + Internal Functions via Observer API */
 	zend_observer_fcall_register(xdebug_observer_init);
+	xdebug_old_execute_ex = zend_execute_ex;
 
 	XG_BASE(error_reporting_override) = 0;
 	XG_BASE(error_reporting_overridden) = 0;
@@ -906,9 +932,10 @@ void xdebug_base_minit(INIT_FUNC_ARGS)
 
 void xdebug_base_mshutdown(void)
 {
-	/* Reset compile and error callbacks */
+	/* Reset compile, function and error callbacks */
 	zend_compile_file = old_compile_file;
 	zend_error_cb = xdebug_old_error_cb;
+	zend_execute_ex = xdebug_old_execute_ex;
 
 #ifdef __linux__
 	if (XG_BASE(private_tmp)) {
@@ -992,6 +1019,7 @@ void xdebug_base_rinit_if_enabled(void)
 {
 	CG(compiler_options) = CG(compiler_options) | ZEND_COMPILE_EXTENDED_STMT;
 	xdebug_disable_opcache_optimizer();
+	zend_execute_ex = xdebug_execute_ex;
 
 	/* Hack: We check for a soap header here, if that's existing, we don't use
 	 * Xdebug's error handler to keep soap fault from fucking up. */
