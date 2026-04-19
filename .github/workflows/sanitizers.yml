@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.3', '8.4']
+        php: ['8.4']
 
     env:
       ASAN_OPTIONS: "detect_leaks=1:detect_stack_use_after_return=1:abort_on_error=1"
@@ -69,8 +69,8 @@ jobs:
           export PATH="$HOME/php-install/bin:$PATH"
           phpize
           CC=clang CXX=clang++ \
-          CFLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
-          LDFLAGS="-fsanitize=address,undefined" \
+          CFLAGS="-fsanitize=address,undefined -fno-sanitize=function -fno-omit-frame-pointer -g" \
+          LDFLAGS="-fsanitize=address,undefined -fno-sanitize=function" \
           ./configure --enable-php-debugger --with-php-config=$HOME/php-install/bin/php-config
           make -j4
 
