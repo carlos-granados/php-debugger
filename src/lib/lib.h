@@ -129,9 +129,6 @@ typedef struct _function_stack_entry {
 	/* debugging properties */
 	bool has_line_breakpoints;
 
-	/* filter properties */
-	unsigned char filtered_stack;
-
 	/* location properties */
 	int          lineno;
 	zend_string *filename;

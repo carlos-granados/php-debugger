@@ -35,7 +35,6 @@
 #include "php_xdebug_arginfo.h"
 
 #include "base.h"
-#include "filter.h"
 #if HAVE_XDEBUG_CONTROL_SOCKET_SUPPORT
 # include "ctrl_socket.h"
 #endif
@@ -414,9 +413,6 @@ function_stack_entry *xdebug_add_stack_frame(zend_execute_data *zdata, zend_op_a
 		tmp->is_trampoline = !!(zdata->func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE);
 
 	}
-
-	/* Now we have location and name, we can run the filter */
-	xdebug_filter_run(tmp);
 
 	return tmp;
 }
@@ -978,10 +974,6 @@ void xdebug_base_rinit(void)
 	/* Observer starts active to allow first-call debug init check */
 	XG_BASE(observer_active) = 1;
 
-	/* filters */
-	XG_BASE(filter_type_stack)         = XDEBUG_FILTER_NONE;
-	XG_BASE(filters_stack)             = xdebug_llist_alloc(xdebug_llist_string_dtor);
-
 	/* Warn about Private Temp Directory */
 	if (XG_BASE(private_tmp)) {
 		xdebug_log_ex(XLOG_CHAN_CONFIG, XLOG_INFO, "PRIVTMP", "Systemd Private Temp Directory is enabled (%s)", XG_BASE(private_tmp));
@@ -1017,9 +1009,6 @@ void xdebug_base_post_deactivate(void)
 		xdfree(XG_BASE(last_exception_trace));
 		XG_BASE(last_exception_trace) = NULL;
 	}
-
-	/* filters */
-	xdebug_llist_destroy(XG_BASE(filters_stack), NULL);
 
 #if HAVE_XDEBUG_CONTROL_SOCKET_SUPPORT
 	/* Close Down Control Socket */

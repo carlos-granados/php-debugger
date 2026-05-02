@@ -51,7 +51,6 @@
 #if HAVE_XDEBUG_CONTROL_SOCKET_SUPPORT
 # include "base/ctrl_socket.h"
 #endif
-#include "base/filter.h"
 #include "debugger/com.h"
 #include "lib/usefulstuff.h"
 #include "lib/lib.h"
@@ -363,9 +362,6 @@ static void xdebug_init_base_globals(xdebug_base_globals_t *xg)
 	xg->statement_handler_enabled  = false;
 	xg->early_connection = false;
 
-	xg->filter_type_stack         = XDEBUG_FILTER_NONE;
-	xg->filters_stack             = NULL;
-
 	xg->php_version_compile_time = PHP_VERSION;
 	xg->php_version_run_time     = zend_get_module_version("standard");
 
@@ -494,10 +490,11 @@ PHP_MINIT_FUNCTION(xdebug)
 		zend_string_release(alias_name);
 	}
 
+	/* register filter constants for backwards compatibility */
+	xdebug_filter_register_constants(INIT_FUNC_ARGS_PASSTHRU);
+
 	/* Register php_debugger.* INI aliases pointing to the same storage as xdebug.* */
 	zend_register_ini_entries(php_debugger_ini_entries, module_number);
-
-	xdebug_filter_register_constants(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Locking in mode as it currently is */
 	if (!xdebug_lib_set_mode(XG(settings.library.requested_mode))) {
