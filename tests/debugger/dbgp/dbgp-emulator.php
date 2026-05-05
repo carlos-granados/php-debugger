@@ -40,10 +40,10 @@ class DbgpEmulator extends DebugClient
 	}
 
 	// Override doRead to capture conversation
-	function doRead($conn, ?string $transaction_id = null)
+	function doRead($conn, ?string $transaction_id = null, ?array $options = [])
 	{
 		ob_start();
-		$result = parent::doRead($conn, $transaction_id);
+		$result = parent::doRead($conn, $transaction_id, $options);
 		$output = ob_get_clean();
 
 		if (!empty($output)) {
