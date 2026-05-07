@@ -14,13 +14,7 @@
    +----------------------------------------------------------------------+
  */
 
-#include "lib/php-header.h"
-#include "php_xdebug.h"
-
-#include "lib/compat.h"
 #include "lib/lib.h"
-#include "lib/str.h"
-#include "lib/xml.h"
 
 #ifndef __HAVE_XDEBUG_VAR_H__
 #define __HAVE_XDEBUG_VAR_H__

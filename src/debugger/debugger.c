@@ -22,7 +22,6 @@
 #include "debugger_private.h"
 #include "frankenphp.h"
 #include "lib/log.h"
-#include "lib/var.h"
 
 extern ZEND_DECLARE_MODULE_GLOBALS(xdebug);
 

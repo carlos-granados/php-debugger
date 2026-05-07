@@ -13,7 +13,6 @@
    | derick@xdebug.org so we can mail you a copy immediately.             |
    +----------------------------------------------------------------------+
  */
-#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>

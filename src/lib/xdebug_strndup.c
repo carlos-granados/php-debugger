@@ -13,12 +13,10 @@
    | derick@xdebug.org so we can mail you a copy immediately.             |
    +----------------------------------------------------------------------+
  */
-#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "mm.h"
-#include "xdebug_strndup.h"
 
 /**
  * Duplicate zend_strndup in core to avoid mismatches

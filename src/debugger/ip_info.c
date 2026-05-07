@@ -17,15 +17,9 @@
 
 #include "php_xdebug.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
 #include <linux/rtnetlink.h>
 #include <arpa/inet.h>
 #include <net/if.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
 #include <resolv.h>
 
 #include "ip_info.h"

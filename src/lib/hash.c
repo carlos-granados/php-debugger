@@ -15,11 +15,9 @@
  */
 
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "hash.h"
-#include "llist.h"
 
 
 static xdebug_ui32 xdebug_hash_str(const char *key, unsigned int key_length)

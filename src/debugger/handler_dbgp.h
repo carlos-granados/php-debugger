@@ -17,8 +17,6 @@
 #ifndef __HAVE_XDEBUG_HANDLER_DBGP_H__
 #define __HAVE_XDEBUG_HANDLER_DBGP_H__
 
-#include <string.h>
-#include "handlers.h"
 #include "lib/cmd_parser.h"
 #include "lib/xml.h"
 

@@ -21,11 +21,6 @@
 extern "C" {
 #endif
 
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
 #ifndef XDEBUG_NO_PHP_FEATURES
 # include "lib/php-header.h"
 #endif

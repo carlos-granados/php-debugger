@@ -15,23 +15,14 @@
  */
 
 #include "lib/php-header.h"
-#include "ext/standard/php_string.h"
-#include "ext/standard/url.h"
-#include "zend.h"
 #include "zend_exceptions.h"
-#include "zend_extensions.h"
-#include "zend_smart_string.h"
-#include "zend_smart_str.h"
 #include "zend_closures.h"
 
 #include "php_xdebug.h"
 
-#include "lib/compat.h"
 #include "lib/lib_private.h"
-#include "lib/mm.h"
 #include "lib/var.h"
 #include "lib/xdebug_strndup.h"
-#include "lib/xml.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(xdebug)
 

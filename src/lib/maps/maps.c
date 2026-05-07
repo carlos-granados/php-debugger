@@ -13,9 +13,6 @@
    | derick@xdebug.org so we can mail you a copy immediately.             |
    +----------------------------------------------------------------------+
  */
-#include <stddef.h>
-#include <stdlib.h>
-
 #ifndef XDEBUG_NO_PHP_FEATURES
 # include "php_xdebug.h"
 #endif
@@ -45,9 +42,6 @@
 #include "parser.h"
 #include "../lib_private.h"
 #include "../log.h"
-#include "../mm.h"
-#include "../php-header.h"
-#include "../usefulstuff.h"
 
 extern ZEND_DECLARE_MODULE_GLOBALS(xdebug);
 

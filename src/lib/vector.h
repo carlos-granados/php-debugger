@@ -17,8 +17,6 @@
 #ifndef __XDEBUG_VECTOR_H__
 #define __XDEBUG_VECTOR_H__
 
-#include <stddef.h>
-#include <string.h>
 #include "mm.h"
 
 typedef void (*xdebug_vector_dtor)(void *);

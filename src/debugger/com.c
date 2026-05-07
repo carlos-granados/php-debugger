@@ -14,10 +14,6 @@
    +----------------------------------------------------------------------+
  */
 #include "php_xdebug.h"
-#include <string.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <stdio.h>
 #include <fcntl.h>
 #ifndef PHP_WIN32
 # if HAVE_POLL_H
@@ -25,8 +21,6 @@
 # elif HAVE_SYS_POLL_H
 #  include <sys/poll.h>
 # endif
-# include <unistd.h>
-# include <sys/socket.h>
 # include <sys/un.h>
 # include <netinet/tcp.h>
 # if HAVE_NETINET_IN_H
@@ -52,7 +46,6 @@
 
 #include "debugger_private.h"
 #include "handler_dbgp.h"
-#include "ip_info.h"
 #include "lib/crc32.h"
 #include "lib/log.h"
 #include "lib/trim.h"

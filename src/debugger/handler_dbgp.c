@@ -14,45 +14,22 @@
    +----------------------------------------------------------------------+
  */
 
-#include <errno.h>
-#include <sys/types.h>
-
-#ifndef PHP_WIN32
-#include <unistd.h>
-#endif
-
 #include "lib/php-header.h"
-#include "SAPI.h"
 
-#include "ext/standard/php_string.h"
-#include "ext/standard/url.h"
-#include "main/php_version.h"
 #include "main/php_network.h"
-#include "ext/standard/base64.h"
-#include "TSRM.h"
 
-#include "php_globals.h"
 #include "php_xdebug.h"
 
-#include "com.h"
 #include "handler_dbgp.h"
-#include "debugger_private.h"
 
-#include "lib/compat.h"
-#include "lib/hash.h"
-#include "lib/llist.h"
 #include "lib/log.h"
-#include "lib/mm.h"
 #include "lib/var_export_xml.h"
-#include "lib/vector.h"
 #include "lib/xdebug_strndup.h"
-#include "lib/xml.h"
 
 #ifdef PHP_WIN32
 #include "win32/time.h"
 #include <process.h>
 #endif
-#include <fcntl.h>
 
 ZEND_EXTERN_MODULE_GLOBALS(xdebug)
 

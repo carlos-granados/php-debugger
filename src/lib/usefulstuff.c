@@ -14,17 +14,7 @@
    +----------------------------------------------------------------------+
  */
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-
-#ifndef WIN32
-# include <unistd.h>
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <sys/resource.h>
-# include <sys/file.h>
-#else
+#ifdef WIN32
 # define PATH_MAX MAX_PATH
 # include <winsock2.h>
 # include <io.h>
@@ -33,17 +23,10 @@
 
 #include "compat.h"
 
-#include "mm.h"
-#include "crc32.h"
-#include "str.h"
-
-#include "lib_private.h"
 #include "usefulstuff.h"
-#include "log.h"
 
-# include "ext/random/php_random.h"
+#include "ext/random/php_random.h"
 #include "ext/standard/flock_compat.h"
-#include "main/php_ini.h"
 
 #ifndef NAME_MAX
 # ifdef _AIX

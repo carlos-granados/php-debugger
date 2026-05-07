@@ -18,31 +18,12 @@
 #include "config.h"
 #endif
 
-#include "lib/php-header.h"
-#include "main/php_version.h"
 #include "lib/compat.h"
 
 #if HAVE_XDEBUG
 
-#ifndef PHP_WIN32
-#include <sys/time.h>
-#include <unistd.h>
-#else
-#include "win32/time.h"
-#include <process.h>
-#endif
-
-#include "TSRM.h"
-#include "SAPI.h"
 #include "zend_extensions.h"
-#include "main/php_ini.h"
-#include "ext/standard/head.h"
-#include "ext/standard/html.h"
 #include "ext/standard/info.h"
-#include "ext/standard/php_string.h"
-#include "php_globals.h"
-#include "main/php_output.h"
-#include "ext/standard/php_var.h"
 
 #include "php_xdebug.h"
 #include "php_xdebug_arginfo.h"
@@ -53,11 +34,7 @@
 #endif
 #include "debugger/com.h"
 #include "debugger/frankenphp.h"
-#include "lib/usefulstuff.h"
-#include "lib/lib.h"
-#include "lib/llist.h"
 #include "lib/log.h"
-#include "lib/mm.h"
 #include "lib/compat_stubs.h"
 
 static zend_result (*xdebug_orig_post_startup_cb)(void);

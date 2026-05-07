@@ -14,18 +14,9 @@
    +----------------------------------------------------------------------+
  */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "maps_private.h"
 #include "parser.h"
 
-#include "../hash.h"
-#include "../mm.h"
-#include "../str.h"
 #include "../trim.h"
 #include "../xdebug_strndup.h"
 

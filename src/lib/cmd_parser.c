@@ -14,7 +14,6 @@
    +----------------------------------------------------------------------+
  */
 
-#include "usefulstuff.h"
 #include "cmd_parser.h"
 
 /* {{{ Constants for state machine */

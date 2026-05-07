@@ -19,8 +19,6 @@
 
 #include "debugger.h"
 
-#include "lib/lib.h"
-
 typedef struct _fd_buf fd_buf;
 
 struct _fd_buf {

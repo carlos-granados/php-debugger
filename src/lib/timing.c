@@ -19,8 +19,6 @@
 #if PHP_WIN32
 # include "win32/time.h"
 # include <versionhelpers.h>
-#else
-# include <sys/time.h>
 #endif
 
 #if HAVE_XDEBUG_CLOCK_GETTIME_NSEC_NP

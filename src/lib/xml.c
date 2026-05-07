@@ -14,13 +14,8 @@
    +----------------------------------------------------------------------+
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include "mm.h"
-#include "str.h"
 #include "var.h"
 #include "xml.h"
-#include "compat.h"
 
 static void xdebug_xml_return_attribute(xdebug_xml_attribute* attr, xdebug_str* output)
 {

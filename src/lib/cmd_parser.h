@@ -18,7 +18,6 @@
 #define __HAVE_CMD_PARSER_H__
 
 #include "php_xdebug.h"
-#include "src/lib/usefulstuff.h"
 
 /* Argument structure */
 typedef struct xdebug_dbgp_arg {

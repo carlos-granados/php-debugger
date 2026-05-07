@@ -15,15 +15,7 @@
  */
 
 #ifdef __linux__
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/socket.h>
 #include <sys/un.h>
-#include <arpa/inet.h>
-#include <signal.h>
-#include <string.h>
-#include <errno.h>
 #endif
 
 #include "php_xdebug.h"

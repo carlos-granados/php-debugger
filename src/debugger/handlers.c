@@ -15,10 +15,7 @@
  */
 
 #include "php_xdebug.h"
-#include "com.h"
 #include "handlers.h"
-#include "handler_dbgp.h"
-#include "lib/mm.h"
 
 xdebug_brk_info *xdebug_brk_info_ctor(void)
 {

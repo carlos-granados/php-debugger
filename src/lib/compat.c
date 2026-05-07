@@ -39,14 +39,7 @@
    +----------------------------------------------------------------------+
  */
 
-#include "lib/php-header.h"
-#include "main/php_version.h"
 #include "compat.h"
-#include "zend_extensions.h"
-
-#include "zend_compile.h"
-#include "ext/standard/base64.h"
-#include "ext/standard/php_string.h"
 
 /* {{{ base64 tables */
 static const char base64_table[] = {

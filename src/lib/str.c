@@ -14,27 +14,10 @@
    +----------------------------------------------------------------------+
  */
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <locale.h>
-#include <assert.h>
-
 #ifndef XDEBUG_NO_PHP_FEATURES
-# if !defined(_MSC_VER)
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
-# endif
-# include "zend_smart_str.h"
-# if !defined(_MSC_VER)
-#   pragma GCC diagnostic pop
-# endif
 # include "lib/php-header.h"
-# include "ext/standard/php_string.h"
 #endif
 
-#include "mm.h"
 #include "str.h"
 
 inline static void realloc_if_needed(xdebug_str *xs, int size_to_fit)

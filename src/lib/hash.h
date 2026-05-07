@@ -17,8 +17,6 @@
 #ifndef __XDEBUG_HASH_H__
 #define __XDEBUG_HASH_H__
 
-#include <stddef.h>
-
 #include "llist.h"
 
 #define XDEBUG_HASH_KEY_IS_STRING 0

@@ -16,8 +16,6 @@
 
 #ifdef __linux__
 
-#include "php_xdebug.h"
-
 char *xdebug_get_ip_for_interface(const char *iface);
 
 #if HAVE_LINUX_RTNETLINK_H

@@ -15,26 +15,16 @@
  */
 
 #include "lib/php-header.h"
-#include "TSRM.h"
-#include "php_globals.h"
 #include "zend_closures.h"
 #include "zend_exceptions.h"
-# include "zend_attributes.h"
 
-#include "zend_interfaces.h"
-
-# include "base_private.h"
-# include "Zend/zend_fibers.h"
-# include "Zend/zend_observer.h"
-
-#include "php_xdebug.h"
-#include "php_xdebug_arginfo.h"
+#include "base_private.h"
+#include "Zend/zend_observer.h"
 
 #include "base.h"
 #if HAVE_XDEBUG_CONTROL_SOCKET_SUPPORT
 # include "ctrl_socket.h"
 #endif
-#include "lib/lib_private.h"
 #include "lib/log.h"
 #include "lib/var.h"
 #include "lib/xdebug_strndup.h"

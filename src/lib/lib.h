@@ -21,8 +21,6 @@
 # include "TSRM.h"
 #endif
 
-#include "zend.h"
-#include "zend_API.h"
 #include "compat.h"
 #include "set.h"
 #include "maps/maps_private.h"

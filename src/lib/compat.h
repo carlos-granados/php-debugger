@@ -17,7 +17,6 @@
 #ifndef __HAVE_XDEBUG_COMPAT_H__
 #define __HAVE_XDEBUG_COMPAT_H__
 
-#include "lib/php-header.h"
 #include "str.h"
 
 #include "ext/standard/head.h"

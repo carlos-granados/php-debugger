@@ -17,13 +17,8 @@
 #ifndef __HAVE_XDEBUG_HANDLERS_H__
 #define __HAVE_XDEBUG_HANDLERS_H__
 
-#include "php_xdebug.h"
-#include "lib/compat.h"
-#include "lib/llist.h"
-#include "lib/hash.h"
 #include "lib/lib.h"
 #include "lib/usefulstuff.h"
-#include "lib/vector.h"
 #include "debugger_private.h"
 
 typedef struct _xdebug_brk_admin            xdebug_brk_admin;

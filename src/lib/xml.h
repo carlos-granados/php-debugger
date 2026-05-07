@@ -14,8 +14,6 @@
    +----------------------------------------------------------------------+
  */
 
-#include "lib/str.h"
-
 #ifndef __HAVE_XDEBUG_XML_H__
 #define __HAVE_XDEBUG_XML_H__
 

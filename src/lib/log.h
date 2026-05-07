@@ -21,12 +21,6 @@
 # include "TSRM.h"
 #endif
 
-#include "lib.h"
-
-#include "zend.h"
-#include "zend_API.h"
-#include "compat.h"
-
 #define XLOG_CRIT      0
 #define XLOG_ERR       1
 #define XLOG_WARN      3

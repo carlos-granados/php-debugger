@@ -13,14 +13,9 @@
    | derick@xdebug.org so we can mail you a copy immediately.             |
    +----------------------------------------------------------------------+
  */
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "maps_private.h"
-#include "../mm.h"
 #include "../strrnchr.h"
-#include "../vector.h"
 #include "../xdebug_strndup.h"
 
 static bool do_local_binary_search(xdebug_vector *line_ranges, int low, int high, size_t remote_line, xdebug_str **local_path, size_t *local_line)
