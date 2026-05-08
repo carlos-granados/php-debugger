@@ -586,6 +586,7 @@ static void xdebug_init_auto_globals(void)
 
 PHP_RINIT_FUNCTION(xdebug)
 {
+	char *found_trigger_value = NULL;
 	int debug_requested;
 	int connected;
 
@@ -614,28 +615,29 @@ PHP_RINIT_FUNCTION(xdebug)
 	xdebug_base_rinit();
 
 	/* Check early if debugging could be requested this request.
-	 * Check if start_with_request=trigger and any trigger is present
-	 * or if start_with_request=yes.
-	 * If not, disable all heavy hooks for
-	 * near-zero overhead. The actual connection happens on first
-	 * function call if triggers are present. */
-	/* Check if debugging could be requested this request.
-	 * For trigger/default mode: check triggers, cookies, env vars.
-	 * For yes mode: always expect a connection.
-	 * For no mode: no debugging will happen.
-	 * Note: xdebug_break() can initiate connections without triggers,
+	 * Determines whether to enable the observer and attempt early connection.
+	 *
+	 * Three checks (all must pass start_with_request=no and XDEBUG_IGNORE guards):
+	 * 1. xdebug_handle_start_session() - legacy XDEBUG_SESSION_START or XDEBUG_CONFIG
+	 * 2. xdebug_lib_start_with_request() - start_with_request=yes
+	 * 3. xdebug_lib_start_with_trigger() - start_with_request=trigger and trigger present
+	 *
+	 * If none match, observer stays disabled for near-zero overhead.
+	 * Note: xdebug_break() can initiate connections later without any of these triggers,
 	 * but it handles re-enabling the observer itself. */
-	/* Respect start_with_request=no and XDEBUG_IGNORE */
 	debug_requested = !xdebug_lib_never_start_with_request() && !xdebug_should_ignore() && (
+		xdebug_handle_start_session() ||
 		xdebug_lib_start_with_request() ||
-		xdebug_lib_start_with_trigger(NULL) ||
-		xdebug_lib_start_upon_error() ||
-		getenv("XDEBUG_SESSION_START") != NULL ||
-		getenv("PHP_DEBUGGER_SESSION_START") != NULL
+		xdebug_lib_start_with_trigger(&found_trigger_value)
 	);
 
 	connected = false;
 	if (debug_requested) {
+		if (found_trigger_value) {
+			xdebug_update_ide_key(found_trigger_value);
+			xdfree(found_trigger_value);
+		}
+
 		/* Debug session requested: check if a client is actually listening
 		 * before enabling expensive EXT_STMT opcodes. This avoids ~2x
 		 * overhead when triggers are present but no IDE is connected. */
