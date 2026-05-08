@@ -408,6 +408,38 @@ function_stack_entry *xdebug_add_stack_frame(zend_execute_data *zdata, zend_op_a
 	return tmp;
 }
 
+static void add_stack_frame_recursively(zend_execute_data *execute_data)
+{
+	zend_op_array *op_array;
+	int type;
+	function_stack_entry *fse;
+
+	if (execute_data->prev_execute_data) {
+		add_stack_frame_recursively(execute_data->prev_execute_data);
+	}
+	if (execute_data->func) {
+		op_array = &(execute_data->func->op_array);
+		type = ZEND_USER_CODE(execute_data->func->type) ? XDEBUG_USER_DEFINED : XDEBUG_BUILT_IN;
+		fse = xdebug_add_stack_frame(execute_data, op_array, type);
+		fse->execute_data = execute_data->prev_execute_data;
+		if (ZEND_CALL_INFO(execute_data) & ZEND_CALL_HAS_SYMBOL_TABLE) {
+			fse->symbol_table = execute_data->symbol_table;
+		}
+	}
+}
+
+/*
+ * This function rebuilds the stack when the debugger is activated after
+ * being previously deactivated. This rebuild deliberately does not fire entry side-effects,
+ * like recording eval functions or checking function entry breakpoints
+ */
+void xdebug_rebuild_stack(void)
+{
+	xdebug_vector_empty(XG_BASE(stack));
+
+	add_stack_frame_recursively(EG(current_execute_data));
+}
+
 /** Function interceptors and dispatchers to modules ***********************/
 
 static void xdebug_execute_user_code_begin(zend_execute_data *execute_data)
@@ -498,6 +530,11 @@ static bool should_run_user_handler(zend_execute_data *execute_data)
 	/* if we're in a ZEND_EXT_STMT, we ignore this function call as it's likely
 	   that it's just being called to check for breakpoints with conditions */
 	if (prev_edata && prev_edata->func && ZEND_USER_CODE(prev_edata->func->type) && prev_edata->opline && prev_edata->opline->opcode == ZEND_EXT_STMT) {
+		return false;
+	}
+
+	if (execute_data->func->type == ZEND_EVAL_CODE)
+	{
 		return false;
 	}
 
