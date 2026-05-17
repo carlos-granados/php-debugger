@@ -1,0 +1,88 @@
+name: Windows Tests
+
+on:
+    pull_request:
+
+jobs:
+    get-windows-extension-matrix:
+        runs-on: ubuntu-latest
+        name: "Generate Windows Build Matrix"
+        outputs:
+            matrix: ${{ steps.extension-matrix.outputs.matrix }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+            - name: Get The Windows Extension Matrix
+              id: extension-matrix
+              uses: php/php-windows-builder/extension-matrix@v1
+              with:
+                  php-version-list: '8.5'
+                  arch-list: 'x64'
+
+    windows:
+        needs: get-windows-extension-matrix
+        runs-on: ${{ matrix.os }}
+        name: "Windows PHP ${{ matrix.php-version }} ${{ matrix.ts == 'ts' && 'ZTS' || 'NTS' }}"
+        strategy:
+            fail-fast: false
+            matrix: ${{fromJson(needs.get-windows-extension-matrix.outputs.matrix)}}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+            - name: Build The Extension
+              uses: php/php-windows-builder/extension@v1
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  arch: x64
+                  ts: ${{ matrix.ts }}
+                  args: --enable-debugger
+                  run-tests: false
+
+            - name: Run tests
+              shell: pwsh
+              run: |
+                  # Find the built DLL
+                  $dll = Get-ChildItem -Path ${{ runner.temp }} -Recurse -Filter 'php_debugger.dll' | Select-Object -First 1
+                  if (-not $dll) {
+                      $dll = Get-ChildItem -Recurse -Filter 'php_debugger.dll' | Select-Object -First 1
+                  }
+                  if (-not $dll) { Write-Error 'php_debugger.dll not found'; exit 1 }
+                  Write-Host "Found DLL at: $($dll.FullName)"
+
+                  # Get PHP extension directory
+                  $extDir = php -r "echo ini_get('extension_dir');"
+                  Write-Host "PHP extension directory (raw): $extDir"
+
+                  # Resolve to full path if relative
+                  if (-not [System.IO.Path]::IsPathRooted($extDir)) {
+                      $phpDir = Split-Path (Get-Command php).Source
+                      $extDir = Join-Path $phpDir $extDir
+                      $extDir = [System.IO.Path]::GetFullPath($extDir)
+                  }
+                  Write-Host "PHP extension directory (resolved): $extDir"
+
+                  # Copy DLL to extension directory
+                  Copy-Item $dll.FullName -Destination "$extDir\php_debugger.dll" -Force
+                  Write-Host "Copied DLL to extension directory"
+
+                  # Get PHP ini file location
+                  $iniFile = php --ini | Select-String "Loaded Configuration File:" | ForEach-Object { $_ -replace ".*Loaded Configuration File:\s*", "" }
+                  $iniFile = $iniFile.Trim().Trim('"')
+                  if ([string]::IsNullOrWhiteSpace($iniFile) -or $iniFile -eq "(none)") {
+                      # Create a new ini file
+                      $iniFile = "$extDir\php.ini"
+                      Write-Host "Creating new php.ini at: $iniFile"
+                  } else {
+                      Write-Host "Using php.ini at: $iniFile"
+                  }
+
+                  # Add zend_extension to ini file
+                  $dllPath = "$extDir\php_debugger.dll"
+                  Add-Content -Path $iniFile -Value "`nzend_extension=$dllPath"
+                  Write-Host "Added zend_extension=$dllPath to php.ini"
+
+                  # Verify extension loads
+                  php -v
+
+                  # Run tests
+                  php -n run-xdebug-tests.php -j1 -q -x --show-diff tests\debugger\bug00421-001.phpt

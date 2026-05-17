@@ -94,6 +94,10 @@ tests/ctest/ctest
 tests/ctest/ftest
 tests/ctest/fuzz-output
 tests/ctest/xdebuglib.a
+!branch-coverage-to-dot.php
+!online_profiling_prepend.php
+!tracefile-analyser.php
+!dbgpclient.php
 
 src/*/*/*/.libs/
 src/*/*.dep
