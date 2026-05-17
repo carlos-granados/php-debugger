@@ -43,10 +43,6 @@
 extern zend_module_entry xdebug_module_entry;
 #define phpext_xdebug_ptr &xdebug_module_entry
 
-#define OUTPUT_NOT_CHECKED -1
-#define OUTPUT_IS_TTY       1
-#define OUTPUT_NOT_TTY      0
-
 #ifdef PHP_WIN32
 #define PHP_XDEBUG_API __declspec(dllexport)
 #else
@@ -67,8 +63,6 @@ PHP_RINIT_FUNCTION(xdebug);
 PHP_RSHUTDOWN_FUNCTION(xdebug);
 PHP_MINFO_FUNCTION(xdebug);
 ZEND_MODULE_POST_ZEND_DEACTIVATE_D(xdebug);
-
-int xdebug_is_output_tty(void);
 
 ZEND_BEGIN_MODULE_GLOBALS(xdebug)
 	struct {

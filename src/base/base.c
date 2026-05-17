@@ -36,7 +36,6 @@
 #endif
 #include "lib/lib_private.h"
 #include "lib/log.h"
-#include "lib/var_export_line.h"
 #include "lib/var.h"
 #include "lib/xdebug_strndup.h"
 
@@ -931,7 +930,6 @@ void xdebug_base_minit(INIT_FUNC_ARGS)
 
 	XG_BASE(error_reporting_override) = 0;
 	XG_BASE(error_reporting_overridden) = 0;
-	XG_BASE(output_is_tty) = OUTPUT_NOT_CHECKED;
 
 	zend_observer_fiber_switch_register(xdebug_fiber_switch_observer);
 
