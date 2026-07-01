@@ -103,7 +103,7 @@ jobs:
                     echo "asset_name=${ASSET_NAME}" >> $GITHUB_OUTPUT
 
             -   name: Upload artifact
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v6
                 with:
                     name: ${{ steps.package.outputs.asset_name }}
                     path: ${{ steps.package.outputs.asset_name }}
@@ -272,7 +272,7 @@ jobs:
                 run: |
                     if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
                         # x86_64 cross-compilation needs x86_64 versions of libraries
-                        arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || true
+                        arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
                         arch -x86_64 /usr/local/bin/brew install autoconf automake libtool bison re2c pkg-config \
                           openssl@3 argon2 oniguruma libsodium
                     else
@@ -347,10 +347,8 @@ jobs:
                           --with-config-file-path="${CONFIG_FILE_PATH}" \
                           --with-config-file-scan-dir="${CONFIG_FILE_SCAN_DIR}" \
                           $CONFIGURE_FLAGS \
-                          --with-pdo-sqlite --with-sqlite3 \
+                          $MACOS_FLAGS \
                           --with-iconv="${ICONV_PATH}" \
-                          --without-readline \
-                          --with-curl \
                           ${{ matrix.ts == 'ts' && '--enable-zts' || '' }}
                     else
                         # x86_64 needs explicit library paths for cross-compilation
@@ -379,10 +377,8 @@ jobs:
                           --with-config-file-path="${CONFIG_FILE_PATH}" \
                           --with-config-file-scan-dir="${CONFIG_FILE_SCAN_DIR}" \
                           $CONFIGURE_FLAGS \
-                          --with-pdo-sqlite --with-sqlite3 \
+                          $MACOS_FLAGS \
                           --with-iconv="${ICONV_PATH}" \
-                          --without-readline \
-                          --with-curl \
                           --disable-opcache-jit \
                           ${{ matrix.ts == 'ts' && '--enable-zts' || '' }}
                     fi
@@ -390,27 +386,46 @@ jobs:
                     make -j$(sysctl -n hw.logicalcpu)
 
             -   name: Verify extension is statically linked
-                if: matrix.arch == 'arm64'
                 run: |
                     cd ~/php-src
-                    ./sapi/cli/php -m | grep -q php_debugger
-                    ./sapi/cli/php -m | grep -q xdebug
-                    ./sapi/cli/php -v | grep -q "PHP Debugger"
+                    if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
+                        # Run x86_64 binary using Rosetta
+                        arch -x86_64 ./sapi/cli/php -m | grep -q php_debugger
+                        arch -x86_64 ./sapi/cli/php -m | grep -q xdebug
+                        arch -x86_64 ./sapi/cli/php -v | grep -q "PHP Debugger"
+                    else
+                        ./sapi/cli/php -m | grep -q php_debugger
+                        ./sapi/cli/php -m | grep -q xdebug
+                        ./sapi/cli/php -v | grep -q "PHP Debugger"
+                    fi
 
             -   name: Test extension functionality
-                if: matrix.arch == 'arm64'
                 run: |
                     cd ~/php-src
-                    ./sapi/cli/php -r "
-                      assert(extension_loaded('php_debugger'), 'php_debugger not loaded');
-                      assert(extension_loaded('xdebug'), 'xdebug compat alias not loaded');
-                      assert(function_exists('xdebug_break'), 'xdebug_break missing');
-                      assert(function_exists('xdebug_info'), 'xdebug_info missing');
-                      assert(function_exists('php_debugger_info'), 'php_debugger_info missing');
-                      assert(ini_get('xdebug.client_port') !== false, 'xdebug.* INI missing');
-                      assert(ini_get('php_debugger.client_port') !== false, 'php_debugger.* INI missing');
-                      echo 'All tests passed!' . PHP_EOL;
-                    "
+                    if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
+                        # Run x86_64 binary using Rosetta
+                        arch -x86_64 ./sapi/cli/php -r "
+                          assert(extension_loaded('php_debugger'), 'php_debugger not loaded');
+                          assert(extension_loaded('xdebug'), 'xdebug compat alias not loaded');
+                          assert(function_exists('xdebug_break'), 'xdebug_break missing');
+                          assert(function_exists('xdebug_info'), 'xdebug_info missing');
+                          assert(function_exists('php_debugger_info'), 'php_debugger_info missing');
+                          assert(ini_get('xdebug.client_port') !== false, 'xdebug.* INI missing');
+                          assert(ini_get('php_debugger.client_port') !== false, 'php_debugger.* INI missing');
+                          echo 'All tests passed!' . PHP_EOL;
+                        "
+                    else
+                        ./sapi/cli/php -r "
+                          assert(extension_loaded('php_debugger'), 'php_debugger not loaded');
+                          assert(extension_loaded('xdebug'), 'xdebug compat alias not loaded');
+                          assert(function_exists('xdebug_break'), 'xdebug_break missing');
+                          assert(function_exists('xdebug_info'), 'xdebug_info missing');
+                          assert(function_exists('php_debugger_info'), 'php_debugger_info missing');
+                          assert(ini_get('xdebug.client_port') !== false, 'xdebug.* INI missing');
+                          assert(ini_get('php_debugger.client_port') !== false, 'php_debugger.* INI missing');
+                          echo 'All tests passed!' . PHP_EOL;
+                        "
+                    fi
 
             -   name: Package artifact
                 id: package
@@ -427,7 +442,7 @@ jobs:
                     echo "asset_path=${HOME}/php-src/${ASSET_NAME}" >> $GITHUB_OUTPUT
 
             -   name: Upload artifact
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v6
                 with:
                     name: ${{ steps.package.outputs.asset_name }}
                     path: ${{ steps.package.outputs.asset_path }}
@@ -542,7 +557,7 @@ jobs:
                     echo "asset_path=${HOME}/php-src/${ASSET_NAME}" >> $GITHUB_OUTPUT
 
             -   name: Upload artifact
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v6
                 with:
                     name: ${{ steps.package.outputs.asset_name }}
                     path: ${{ steps.package.outputs.asset_path }}
@@ -584,9 +599,18 @@ jobs:
                     $phpTag = $tags | Where-Object { $_ -match "refs/tags/php-$phpVersion\." } |
                               Where-Object { $_ -notmatch '\^{}' } |
                               Where-Object { $_ -notmatch 'RC|alpha|beta' } |
-                              ForEach-Object { $_ -replace '.*refs/tags/', '' } |
-                              Sort-Object -Descending |
-                              Select-Object -First 1
+                              ForEach-Object { $_ -replace '.*refs/tags/php-', '' } |
+                              ForEach-Object {
+                                  $parts = $_ -split '\.'
+                                  [PSCustomObject]@{
+                                      Tag = "php-$_"
+                                      Major = [int]$parts[0]
+                                      Minor = [int]$parts[1]
+                                      Patch = [int]$parts[2]
+                                  }
+                              } |
+                              Sort-Object -Property Major,Minor,Patch -Descending |
+                              Select-Object -First 1 -ExpandProperty Tag
 
                     if (-not $phpTag) {
                         Write-Host "No stable tag found for PHP $phpVersion, using branch PHP-$phpVersion"
@@ -687,27 +711,29 @@ jobs:
                     echo "asset_name=${assetName}" >> $env:GITHUB_OUTPUT
 
             -   name: Upload artifact
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v6
                 with:
                     name: ${{ steps.package.outputs.asset_name }}
                     path: ${{ steps.package.outputs.asset_name }}
 
     release:
-        needs: [build-macos, build-linux,, build-windows, build-php-macos, build-php-linux, build-php-windows]
+        needs: [build-macos, build-linux, build-windows, build-php-macos, build-php-linux, build-php-windows]
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v7
 
             -   name: Download all artifacts
-                uses: actions/download-artifact@v4
+                uses: actions/download-artifact@v6
                 with:
                     path: artifacts
-                    pattern: php*debugger*.{so,dll}
 
             -   name: Collect release assets
                 run: |
                     mkdir release-assets
-                    find artifacts -type f \( -name '*.so' -o -name '*.dll' -o -name 'php-php*' -o -name '*.exe' \) -exec cp {} release-assets/ \;
+                    # Copy extension files (.so and .dll)
+                    find artifacts -type f \( -name '*.so' -o -name '*.dll' \) -exec cp {} release-assets/ \;
+                    # Copy PHP interpreter binaries (no extension for Unix, .exe for Windows)
+                    find artifacts -type f -name 'php-php*' ! -name '*.zip' -exec cp {} release-assets/ \;
                     ls -la release-assets/
 
             -   name: Create release
